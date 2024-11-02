@@ -1,5 +1,6 @@
 import createUserAction from "./create.user.action";
 import UserActions from "./read.user.action";
+import softDeleteUserAction from "./delete.user.action";
 import { UserType } from "./user.model";
 import { CreateUserType } from "./user.types";
 
@@ -24,5 +25,17 @@ async function verifyUserPassword(email: string, password: string): Promise<bool
   return createdUser;
 }
 
+async function softDeleteUser(userId: string) {
+  try {
+      const user = await softDeleteUserAction(userId);
+      if (!user) {
+          throw new Error("User not found");
+      }
+      return { success: true, data: user };
+  } catch (error) {
+      return { success: false, error };
+  }
+}
+
 // EXPORT CONTROLLER FUNCTIONS
-export { readUsers, readUserbyID, createUser, verifyUserPassword };
+export { readUsers, readUserbyID, createUser, verifyUserPassword, softDeleteUser };

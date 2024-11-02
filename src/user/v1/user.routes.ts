@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { createUser, readUsers, readUserbyID, verifyUserPassword } from "./user.controller";
+import { createUser, readUsers, readUserbyID, verifyUserPassword, softDeleteUser  } from "./user.controller";
 import { CreateUserType } from "./user.types";
 import { AuthMiddleware } from "../../middleware/auth";
 import { UserType } from "./user.model";
@@ -99,12 +99,31 @@ async function VerifyUserPassword(request: Request<{}, {}, { email: string; pass
   }
 }
 
+async function handleSoftDeleteUser(request: Request, response: Response) {
+  const { userId } = request.params;
+
+  const result = await softDeleteUser(userId);
+
+  if (result.success) {
+      response.status(200).json({
+          message: "User soft deleted successfully",
+          user: result.data,
+      });
+  } else {
+      response.status(500).json({
+          message: "Failure",
+          error: (result.error as Error).message,
+      });
+  }
+}
+
 
 // DECLARE ENDPOINTS
 userRoutes.get("/", GetUsers);
 userRoutes.get("/one/:userId", GetOneUser); //AuthMiddleware
 userRoutes.post("/", CreateUser);
 userRoutes.get("/verify-password/", VerifyUserPassword); //AuthMiddleware
+userRoutes.delete("/user/:userId", handleSoftDeleteUser);
 
 
 // EXPORT ROUTES

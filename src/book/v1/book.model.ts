@@ -11,6 +11,7 @@ type BookType = {
     gender: string;
     editorial: string;
     available: boolean;
+    state: boolean;
 };
 
 // DECLARE MONGOOSE SCHEMA
@@ -47,6 +48,11 @@ const BookSchema = new Schema<BookType>({
         required: false
     },
     available: {
+        type: Boolean,
+        required: false,
+        default: true
+    },
+    state: {
         type: Boolean,
         required: false,
         default: true
