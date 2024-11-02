@@ -7,7 +7,7 @@ import {
   softDeleteUser,
 } from "./user.controller";
 import { CreateUserType } from "./user.types";
-import { AuthMiddleware } from "../../middleware/auth";
+import { authMiddleware } from "../../middlewares/auth";
 import { UserType } from "./user.model";
 
 // INIT ROUTES
@@ -115,8 +115,7 @@ async function VerifyUserPassword(
 }
 
 async function handleSoftDeleteUser(request: Request, response: Response) {
-  const { userId } = request.params;
-
+  const { userId } = request.params;  
   const result = await softDeleteUser(userId);
 
   if (result.success) {
@@ -132,12 +131,24 @@ async function handleSoftDeleteUser(request: Request, response: Response) {
   }
 }
 
+async function isAdmin(request: Request, response: Response) {
+  const { userId } = request.params;  
+  let user = await readUserbyID(userId);
+  if (!user) {
+    throw new Error("User not found");
+  } else if (user.role !== "admin") {
+    return false;
+  }
+  return true;
+}
+
+
 // DECLARE ENDPOINTS
 userRoutes.get("/", GetUsers);
-userRoutes.get("/one/:userId", GetOneUser); //AuthMiddleware
+userRoutes.get("/one/:userId", authMiddleware, GetOneUser); //authMiddleware
 userRoutes.post("/", CreateUser);
-userRoutes.get("/verify-password/", VerifyUserPassword); //AuthMiddleware
-userRoutes.delete("/user/:userId", handleSoftDeleteUser);
+userRoutes.get("/verify-password/", authMiddleware, VerifyUserPassword); //authMiddleware
+userRoutes.delete("/user/:userId", authMiddleware, handleSoftDeleteUser);
 
 // EXPORT ROUTES
-export default userRoutes;
+export default {userRoutes, isAdmin};

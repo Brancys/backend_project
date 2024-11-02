@@ -9,6 +9,7 @@ type UserType = {
     email: string;
     password: string;
     state: boolean;
+    role: string;
 };
 
 // DECLARE MONGOOSE SCHEMA
@@ -37,6 +38,11 @@ const UserSchema = new Schema<UserType>({
     state: {
         type: Boolean,
         default: true
+    },
+    role: {
+        type: String,
+        enum: ['admin', 'user'],
+        default: 'user'
     }
 },{
     timestamps: true,

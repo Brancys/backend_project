@@ -8,7 +8,7 @@ import {
   softDeleteBook
 } from "./book.controller";
 import { CreateBookType } from "./book.types";
-import { AuthMiddleware } from "../../middleware/auth";
+import { authMiddleware } from "../../middlewares/auth";
 import { BookType } from "./book.model";
 
 // INIT ROUTES
