@@ -18,13 +18,15 @@ const UserSchema = new Schema<UserType>({
         required: true
     },
     cedula: {
-        type: String
+        type: String,
+        editable: false,
     },
     email: {
         type: String,
         required: true,
         unique: true,
         match: [/\S+@\S+\.\S+/, 'El email no es válido'],
+        editable: false
     },
     password: {
         type: String,
