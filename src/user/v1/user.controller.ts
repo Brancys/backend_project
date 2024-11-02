@@ -18,6 +18,11 @@ async function createUser(UserData: CreateUserType): Promise<UserType> {
 
   return createdUser;
 }
+async function verifyUserPassword(email: string, password: string): Promise<boolean> {
+  const createdUser = await UserActions.verifyUser(email, password);
+
+  return createdUser;
+}
 
 // EXPORT CONTROLLER FUNCTIONS
-export { readUsers, readUserbyID, createUser };
+export { readUsers, readUserbyID, createUser, verifyUserPassword };

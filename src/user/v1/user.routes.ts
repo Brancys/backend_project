@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { createUser, readUsers, readUserbyID } from "./user.controller";
+import { createUser, readUsers, readUserbyID, verifyUserPassword } from "./user.controller";
 import { CreateUserType } from "./user.types";
 import { AuthMiddleware } from "../../middleware/auth";
 import { UserType } from "./user.model";
@@ -70,10 +70,42 @@ async function GetOneUser(request: Request<{ userId: string }>, response: Respon
   }
 }
 
+// Verificar la contraseña de un usuario por correo electrónico
+async function VerifyUserPassword(request: Request<{}, {}, { email: string; password: string }>, response: Response) {
+  const { email, password } = request.body;
+
+  if (!email || !password) {
+    return response.status(400).json({
+      message: "Email and password are required",
+    });
+  }
+
+  try {
+    const isPasswordCorrect = await verifyUserPassword(email, password);
+    if (!isPasswordCorrect) {
+      return response.status(401).json({
+        message: "Incorrect password",
+      });
+    }
+
+    response.status(200).json({
+      message: "Password verified successfully",
+    });
+  } catch (error) {
+    response.status(500).json({
+      message: "Failure",
+      error: (error as Error).message,
+    });
+  }
+}
+
+
 // DECLARE ENDPOINTS
 userRoutes.get("/", GetUsers);
 userRoutes.get("/one/:userId", GetOneUser); //AuthMiddleware
 userRoutes.post("/", CreateUser);
+userRoutes.get("/verify-password/", VerifyUserPassword);
+
 
 // EXPORT ROUTES
 export default userRoutes;

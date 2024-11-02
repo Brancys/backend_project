@@ -12,14 +12,14 @@ async function readUserbyIDAction(id: string): Promise<UserType | null> {
   return result;
 }
 
-async function verifyPassword(storedPassword: string, inputPassword: string): Promise<boolean> {
-  try {
-      return await argon2.verify(storedPassword, inputPassword);
-  } catch (error) {
-      console.error("Error verifying password:", error);
-      return false;
-  }
+async function verifyUser(email: string, password: string): Promise<boolean>  {
+  const user = await UserModel.findOne({ email });
+    if (!user || !user.password) {
+        throw new Error("User not found or password not set");
+    }
+
+    return await argon2.verify(user.password, password);
 } 
 
 // EXPORT ACTION FUNCTION
-export default {readUserAction, readUserbyIDAction, verifyPassword};
+export default {readUserAction, readUserbyIDAction, verifyUser};
