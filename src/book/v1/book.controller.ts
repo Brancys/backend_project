@@ -13,6 +13,7 @@ export interface BookFilters {
   gender?: string;
   editorial?: string;
   available?: boolean;
+  state?: boolean;
 }
 
 // DECLARE CONTROLLER FUNCTIONS
@@ -33,6 +34,7 @@ async function createBook(bookData: CreateBookType): Promise<BookType> {
 
 async function readBooksbyFilters(filters: BookFilters) {
   try {
+    filters.state = true;
     const books = await bookActions.readBooksbyFiltersAction(filters);
     return { success: true, data: books };
   } catch (error) {
