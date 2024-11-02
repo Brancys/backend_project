@@ -8,6 +8,9 @@ type BookType = {
     releaseDate: string;
     price: string;
     description: string;
+    gender: string;
+    editorial: string;
+    available: boolean;
 };
 
 // DECLARE MONGOOSE SCHEMA
@@ -18,19 +21,35 @@ const BookSchema = new Schema<BookType>({
     },
     author: {
         type: String,
-        required: false
+        required: false,
+        default: "Anónimo"
     },
     releaseDate: {
         type: String,
-        required: true
+        required: false,
+        default: "No hay registro."
     },
     price: {
         type: String,
-        required: true
+        required: false
     },
     description: {
         type: String,
+        required: false,
+        default: "No hay descripción."
+    },
+    gender: {
+        type: String,
         required: false
+    },
+    editorial: {
+        type: String,
+        required: false
+    },
+    available: {
+        type: Boolean,
+        required: false,
+        default: true
     }
 },{
     timestamps: true,

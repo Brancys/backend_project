@@ -8,6 +8,7 @@ type UserType = {
     cedula: string;
     email: string;
     password: string;
+    state: boolean;
 };
 
 // DECLARE MONGOOSE SCHEMA
@@ -31,6 +32,10 @@ const UserSchema = new Schema<UserType>({
         minlength: [8, 'La contraseña debe tener al menos 8 caracteres'],
         maxlength: [15, 'La contraseña no puede tener más de 15 caracteres'],
     },
+    state: {
+        type: Boolean,
+        default: true
+    }
 },{
     timestamps: true,
     versionKey: false,

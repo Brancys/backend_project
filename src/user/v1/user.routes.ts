@@ -104,7 +104,7 @@ async function VerifyUserPassword(request: Request<{}, {}, { email: string; pass
 userRoutes.get("/", GetUsers);
 userRoutes.get("/one/:userId", GetOneUser); //AuthMiddleware
 userRoutes.post("/", CreateUser);
-userRoutes.get("/verify-password/", VerifyUserPassword);
+userRoutes.get("/verify-password/", VerifyUserPassword); //AuthMiddleware
 
 
 // EXPORT ROUTES

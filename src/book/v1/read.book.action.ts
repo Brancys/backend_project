@@ -11,6 +11,11 @@ async function readBookbyIDAction(id: string): Promise<BookType | null> {
   return result;
 }
 
+async function readBooksbyFiltersAction(filters: any) {
+  console.log('desde read-action: ',filters);
+  return await BookModel.find(filters);
+}
+
 
 // EXPORT ACTION FUNCTION
-export default {readBookAction, readBookbyIDAction};
+export default {readBookAction, readBookbyIDAction, readBooksbyFiltersAction};
