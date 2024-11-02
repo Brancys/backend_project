@@ -4,19 +4,20 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node src/server.ts",
-    "dev": "nodemon src/server.ts",
-    "db": "C:\\\"Program Files\"\\MongoDB\\Server\\7.0\\bin\\mongod.exe --port 27017 --dbpath \"..\\db\""
+    "dev": "nodemon src/server.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "argon2": "^0.41.1",
     "cors": "^2.8.5",
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.7",
