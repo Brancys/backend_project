@@ -2,6 +2,7 @@ import createBookAction from "./create.book.action";
 import bookActions from "./read.book.action";
 import { BookType } from "./book.model";
 import { CreateBookType } from "./book.types";
+import softDeleteBookAction from "./delete.book.action";
 
 export interface BookFilters {
   name?: string | { $regex: RegExp };
@@ -39,5 +40,17 @@ async function readBooksbyFilters(filters: BookFilters) {
   }
 }
 
+async function softDeleteBook(BookId: string) {
+  try {
+      const book = await softDeleteBookAction(BookId);
+      if (!book) {
+          throw new Error("Book not found");
+      }
+      return { success: true, data: book };
+  } catch (error) {
+      return { success: false, error };
+  }
+}
+
 // EXPORT CONTROLLER FUNCTIONS
-export { readBooks, readBookbyID, createBook, readBooksbyFilters };
+export { readBooks, readBookbyID, createBook, readBooksbyFilters, softDeleteBook };

@@ -5,6 +5,7 @@ import {
   readBookbyID,
   readBooksbyFilters,
   BookFilters,
+  softDeleteBook
 } from "./book.controller";
 import { CreateBookType } from "./book.types";
 import { AuthMiddleware } from "../../middleware/auth";
@@ -52,6 +53,24 @@ async function CreateBooks(
     response.status(500).json({
       message: "Failure",
       error: (error as Error).message,
+    });
+  }
+}
+
+async function handleSoftDeleteBook(request: Request, response: Response) {
+  const { bookId } = request.params;
+
+  const result = await softDeleteBook(bookId);
+
+  if (result.success) {
+    response.status(200).json({
+      message: "Book soft deleted successfully",
+      user: result.data,
+    });
+  } else {
+    response.status(500).json({
+      message: "Failure",
+      error: (result.error as Error).message,
     });
   }
 }
@@ -135,6 +154,7 @@ BookRoutes.get("/", GetBooks);
 BookRoutes.get("/one/:bookId", GetOneBook); //AuthMiddleware
 BookRoutes.post("/", CreateBooks);
 BookRoutes.get("/filter", handleReadBooks);
+BookRoutes.delete("/book/:bookId", handleSoftDeleteBook);
 
 // EXPORT ROUTES
 export default BookRoutes;

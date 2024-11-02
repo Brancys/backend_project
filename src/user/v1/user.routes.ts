@@ -1,5 +1,11 @@
 import { Router, Request, Response } from "express";
-import { createUser, readUsers, readUserbyID, verifyUserPassword, softDeleteUser  } from "./user.controller";
+import {
+  createUser,
+  readUsers,
+  readUserbyID,
+  verifyUserPassword,
+  softDeleteUser,
+} from "./user.controller";
 import { CreateUserType } from "./user.types";
 import { AuthMiddleware } from "../../middleware/auth";
 import { UserType } from "./user.model";
@@ -26,7 +32,10 @@ async function GetUsers(request: Request, response: Response) {
 }
 
 // Crear un nuevo usuario
-async function CreateUser(request: Request<{}, {}, CreateUserType>, response: Response) {
+async function CreateUser(
+  request: Request<{}, {}, CreateUserType>,
+  response: Response
+) {
   if (!request.body.name) {
     return response.status(400).json({
       message: "Missing fields",
@@ -48,7 +57,10 @@ async function CreateUser(request: Request<{}, {}, CreateUserType>, response: Re
 }
 
 // Obtener un usuario específico
-async function GetOneUser(request: Request<{ userId: string }>, response: Response) {
+async function GetOneUser(
+  request: Request<{ userId: string }>,
+  response: Response
+) {
   const userId = request.params.userId;
 
   try {
@@ -71,7 +83,10 @@ async function GetOneUser(request: Request<{ userId: string }>, response: Respon
 }
 
 // Verificar la contraseña de un usuario por correo electrónico
-async function VerifyUserPassword(request: Request<{}, {}, { email: string; password: string }>, response: Response) {
+async function VerifyUserPassword(
+  request: Request<{}, {}, { email: string; password: string }>,
+  response: Response
+) {
   const { email, password } = request.body;
 
   if (!email || !password) {
@@ -105,18 +120,17 @@ async function handleSoftDeleteUser(request: Request, response: Response) {
   const result = await softDeleteUser(userId);
 
   if (result.success) {
-      response.status(200).json({
-          message: "User soft deleted successfully",
-          user: result.data,
-      });
+    response.status(200).json({
+      message: "User soft deleted successfully",
+      user: result.data,
+    });
   } else {
-      response.status(500).json({
-          message: "Failure",
-          error: (result.error as Error).message,
-      });
+    response.status(500).json({
+      message: "Failure",
+      error: (result.error as Error).message,
+    });
   }
 }
-
 
 // DECLARE ENDPOINTS
 userRoutes.get("/", GetUsers);
@@ -124,7 +138,6 @@ userRoutes.get("/one/:userId", GetOneUser); //AuthMiddleware
 userRoutes.post("/", CreateUser);
 userRoutes.get("/verify-password/", VerifyUserPassword); //AuthMiddleware
 userRoutes.delete("/user/:userId", handleSoftDeleteUser);
-
 
 // EXPORT ROUTES
 export default userRoutes;
