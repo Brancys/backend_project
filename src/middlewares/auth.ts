@@ -28,9 +28,9 @@ export function verifyToken(token: string) {
 
 // Middleware para proteger rutas con autenticación
 export function authMiddleware(request: any, response: any, next: any) {
-  if (isAdmin) {
-    next();
-  }
+  // if (isAdmin) {
+  //   next();
+  // }
   const token = request.headers["authorization"]; // Obtener el token del header
   if (!token) {
     return response

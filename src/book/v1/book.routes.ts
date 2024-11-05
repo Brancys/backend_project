@@ -8,8 +8,6 @@ import {
   softDeleteBook
 } from "./book.controller";
 import { CreateBookType } from "./book.types";
-import { authMiddleware } from "../../middlewares/auth";
-import { BookType } from "./book.model";
 
 // INIT ROUTES
 const BookRoutes = Router();
@@ -154,7 +152,7 @@ BookRoutes.get("/", GetBooks);
 BookRoutes.get("/one/:bookId", GetOneBook); //AuthMiddleware
 BookRoutes.post("/", CreateBooks);
 BookRoutes.get("/filter", handleReadBooks);
-BookRoutes.delete("/book/:bookId", handleSoftDeleteBook);
+BookRoutes.delete("/delete/:bookId", handleSoftDeleteBook);
 
 // EXPORT ROUTES
 export default BookRoutes;

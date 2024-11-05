@@ -3,6 +3,7 @@ import UserActions from "./read.user.action";
 import softDeleteUserAction from "./delete.user.action";
 import { UserType } from "./user.model";
 import { CreateUserType } from "./user.types";
+import { updateUserReservationsAction } from './update.user.action';
 import e from "express";
 
 // DECLARE CONTROLLER FUNCTIONS
@@ -29,6 +30,20 @@ async function verifyUserPassword(
   return createdUser;
 }
 
+export async function addBookToReservations(userId: string, bookId: string) {
+  if (!bookId) {
+      throw new Error("Book ID is required");
+  }
+
+  // Llamar a la acción para realizar la reserva
+  const updatedUser = await updateUserReservationsAction(userId, bookId);
+  if (!updatedUser) {
+      throw new Error("User not found");
+  }
+
+  return updatedUser;
+}
+
 async function softDeleteUser(userId: string) {
   try {
     const user = await softDeleteUserAction(userId);
@@ -40,6 +55,7 @@ async function softDeleteUser(userId: string) {
     return { success: false, error };
   }
 }
+
 
 // EXPORT CONTROLLER FUNCTIONS
 export {

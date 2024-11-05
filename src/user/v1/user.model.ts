@@ -1,5 +1,6 @@
-import { model, Schema, CallbackError } from "mongoose";
+import { model, Schema, CallbackError, Types } from "mongoose";
 import argon2 from 'argon2';    
+import { BookType } from "../../book/v1/book.model";
 
 // DECLARE MODEL TYPE
 type UserType = {
@@ -10,7 +11,7 @@ type UserType = {
     password: string;
     state: boolean;
     role: string;
-};
+    bookings: Types.ObjectId[];};
 
 // DECLARE MONGOOSE SCHEMA
 const UserSchema = new Schema<UserType>({
@@ -43,7 +44,8 @@ const UserSchema = new Schema<UserType>({
         type: String,
         enum: ['admin', 'user'],
         default: 'user'
-    }
+    },
+    bookings: [{ type: Schema.Types.ObjectId, ref: 'Book' }] // Asegúrate de tener `ref: 'Book'`
 },{
     timestamps: true,
     versionKey: false,

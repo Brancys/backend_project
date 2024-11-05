@@ -5,10 +5,10 @@ import {
   readUserbyID,
   verifyUserPassword,
   softDeleteUser,
+  addBookToReservations,
 } from "./user.controller";
 import { CreateUserType } from "./user.types";
 import { authMiddleware } from "../../middlewares/auth";
-import { UserType } from "./user.model";
 
 // INIT ROUTES
 const userRoutes = Router();
@@ -142,13 +142,32 @@ async function isAdmin(request: Request, response: Response) {
   return true;
 }
 
+// Función para manejar el endpoint de añadir un libro a las reservas del usuario
+async function handleAddBookToReservations(request: Request, response: Response) {
+  const { userId } = request.params;
+  const { bookId } = request.body;
+
+  try {
+      const updatedUser = await addBookToReservations(userId, bookId);
+      response.status(200).json({
+          message: "Book added to reservations successfully",
+          user: updatedUser,
+      });
+  } catch (error) {
+      response.status(400).json({
+          message: (error as Error).message,
+      });
+  }
+}
+
 
 // DECLARE ENDPOINTS
 userRoutes.get("/", GetUsers);
-userRoutes.get("/one/:userId", authMiddleware, GetOneUser); //authMiddleware
+userRoutes.get("/one/:userId", GetOneUser);
 userRoutes.post("/", CreateUser);
-userRoutes.get("/verify-password/", authMiddleware, VerifyUserPassword); //authMiddleware
-userRoutes.delete("/user/:userId", authMiddleware, handleSoftDeleteUser);
+userRoutes.get("/verify-password/", VerifyUserPassword); 
+userRoutes.delete("/user/:userId", handleSoftDeleteUser);
+userRoutes.post("/booking/:userId/reserve", handleAddBookToReservations); //authMiddleware
 
 // EXPORT ROUTES
-export default {userRoutes, isAdmin};
+export default userRoutes;
