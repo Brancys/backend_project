@@ -3,7 +3,7 @@ import UserActions from "./read.user.action";
 import softDeleteUserAction from "./delete.user.action";
 import { UserType } from "./user.model";
 import { CreateUserType } from "./user.types";
-import { updateUserReservationsAction } from './update.user.action';
+import { updateUserReservationsAction, updateUserAction } from './update.user.action';
 import e from "express";
 
 // DECLARE CONTROLLER FUNCTIONS
@@ -12,15 +12,18 @@ async function readUsers(): Promise<UserType[]> {
 
   return Users;
 }
+
 async function readUserbyID(id: string): Promise<UserType | null> {
   const Users = await UserActions.readUserbyIDAction(id);
   return Users;
 }
+
 async function createUser(UserData: CreateUserType): Promise<UserType> {
   const createdUser = await createUserAction(UserData);
 
   return createdUser;
 }
+
 async function verifyUserPassword(
   email: string,
   password: string
@@ -28,6 +31,17 @@ async function verifyUserPassword(
   const createdUser = await UserActions.verifyUser(email, password);
 
   return createdUser;
+}
+
+export async function loginController(request: e.Request, response: e.Response) {
+  const { email, password } = request.body;
+
+  try {
+      const { token, role } = await UserActions.loginAction(email, password);
+      response.status(200).json({ message: 'Login successful', token, role });
+  } catch (error) {
+      response.status(400).json({ message: (error as Error).message });
+  }
 }
 
 export async function addBookToReservations(userId: string, bookId: string) {
@@ -45,17 +59,28 @@ export async function addBookToReservations(userId: string, bookId: string) {
 }
 
 async function softDeleteUser(userId: string) {
-  try {
-    const user = await softDeleteUserAction(userId);
-    if (!user) {
+  const deletedUser = await softDeleteUserAction(userId);
+
+  if (!deletedUser) {
       throw new Error("User not found");
-    }
-    return { success: true, data: user };
-  } catch (error) {
-    return { success: false, error };
   }
+
+  return deletedUser;
 }
 
+async function updateUserController(userId: string, updateData: Partial<{ name: string; cedula: string; password: string }>) {
+  if (!updateData.name && !updateData.cedula && !updateData.password) {
+      throw new Error("No valid fields to update");
+  }
+
+  const updatedUser = await updateUserAction(userId, updateData);
+
+  if (!updatedUser) {
+      throw new Error("User not found");
+  }
+
+  return updatedUser;
+}
 
 // EXPORT CONTROLLER FUNCTIONS
 export {
@@ -64,4 +89,5 @@ export {
   createUser,
   verifyUserPassword,
   softDeleteUser,
-};
+  updateUserController,
+  };

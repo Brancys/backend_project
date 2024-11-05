@@ -5,9 +5,11 @@ import {
   readBookbyID,
   readBooksbyFilters,
   BookFilters,
-  softDeleteBook
+  softDeleteBook,
+  updateBookController,
 } from "./book.controller";
 import { CreateBookType } from "./book.types";
+import { authMiddleware } from "../../middlewares/auth";
 
 // INIT ROUTES
 const BookRoutes = Router();
@@ -73,7 +75,7 @@ async function handleSoftDeleteBook(request: Request, response: Response) {
   }
 }
 
-// Obtener un usuario específico
+// Obtener un libro específico
 async function GetOneBook(
   request: Request<{ bookId: string }>,
   response: Response
@@ -100,7 +102,7 @@ async function GetOneBook(
   }
 }
 
-// Función para manejar la solicitud de libros con filtros
+// Función para manejar el filtrado de libros
 async function handleReadBooks(request: Request, response: Response) {
   const {
     name,
@@ -147,12 +149,36 @@ async function handleReadBooks(request: Request, response: Response) {
   }
 }
 
+async function handleUpdateUser(request: Request, response: Response) {
+  const { bookId } = request.params;
+  const { title, author, releaseDate, price, description } = request.body;
+
+  // Crear un objeto con solo los datos que queremos actualizar
+  const updateData: Partial<{ title: string; author: string; releaseDate: string; price: string; description: string }> = {
+      ...(title && { title }),
+      ...(author && { author }),
+      ...(releaseDate && { releaseDate }),
+      ...(price && { price }),
+      ...(description && { description })
+  };
+
+  try {
+      const result = await updateBookController(bookId, updateData);
+      response.status(200).json({ message: "Book updated successfully", book: result });
+  } catch (error) {
+      response.status(400).json({ message: (error as Error).message });
+  }
+};
+
+
+
 // DECLARE ENDPOINTS
 BookRoutes.get("/", GetBooks);
 BookRoutes.get("/one/:bookId", GetOneBook); //AuthMiddleware
-BookRoutes.post("/", CreateBooks);
+BookRoutes.post("/",authMiddleware(true), CreateBooks);
 BookRoutes.get("/filter", handleReadBooks);
-BookRoutes.delete("/delete/:bookId", handleSoftDeleteBook);
+BookRoutes.delete("/delete/:bookId", authMiddleware(true), handleSoftDeleteBook);
+BookRoutes.put('/book/:bookId', authMiddleware(true), handleUpdateUser);
 
 // EXPORT ROUTES
 export default BookRoutes;

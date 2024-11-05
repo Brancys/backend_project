@@ -6,6 +6,7 @@ import {
   verifyUserPassword,
   softDeleteUser,
   addBookToReservations,
+  updateUserController,
 } from "./user.controller";
 import { CreateUserType } from "./user.types";
 import { authMiddleware } from "../../middlewares/auth";
@@ -114,34 +115,6 @@ async function VerifyUserPassword(
   }
 }
 
-async function handleSoftDeleteUser(request: Request, response: Response) {
-  const { userId } = request.params;  
-  const result = await softDeleteUser(userId);
-
-  if (result.success) {
-    response.status(200).json({
-      message: "User soft deleted successfully",
-      user: result.data,
-    });
-  } else {
-    response.status(500).json({
-      message: "Failure",
-      error: (result.error as Error).message,
-    });
-  }
-}
-
-async function isAdmin(request: Request, response: Response) {
-  const { userId } = request.params;  
-  let user = await readUserbyID(userId);
-  if (!user) {
-    throw new Error("User not found");
-  } else if (user.role !== "admin") {
-    return false;
-  }
-  return true;
-}
-
 // Función para manejar el endpoint de añadir un libro a las reservas del usuario
 async function handleAddBookToReservations(request: Request, response: Response) {
   const { userId } = request.params;
@@ -160,14 +133,44 @@ async function handleAddBookToReservations(request: Request, response: Response)
   }
 }
 
+async function handleSoftDeleteUser(request: Request, response: Response){
+  const { userId } = request.params;
+
+  try {
+      const result = await softDeleteUser(userId);
+      response.status(200).json({ message: "User deleted successfully", user: result });
+  } catch (error) {
+      response.status(400).json({ message: (error as Error).message });
+  }
+};
+
+async function handleUpdateUser(request: Request, response: Response) {
+  const { userId } = request.params;
+  const { name, cedula, password } = request.body;
+
+  const updateData = {
+      ...(name && { name }),
+      ...(cedula && { cedula }),
+      ...(password && { password })
+  };
+
+  try {
+      const result = await updateUserController(userId, updateData);
+      response.status(200).json({ message: "User updated successfully", user: result });
+  } catch (error) {
+      response.status(400).json({ message: (error as Error).message });
+  }
+}
+
 
 // DECLARE ENDPOINTS
 userRoutes.get("/", GetUsers);
-userRoutes.get("/one/:userId", GetOneUser);
-userRoutes.post("/", CreateUser);
-userRoutes.get("/verify-password/", VerifyUserPassword); 
-userRoutes.delete("/user/:userId", handleSoftDeleteUser);
-userRoutes.post("/booking/:userId/reserve", handleAddBookToReservations); //authMiddleware
+userRoutes.get("/one/:userId", GetOneUser); 
+userRoutes.post("/", CreateUser); 
+userRoutes.get("/verify-password/", VerifyUserPassword); //authMiddleware
+userRoutes.delete("/user/:userId", authMiddleware(true), handleSoftDeleteUser); //authMiddleware
+userRoutes.post("/booking/:userId/reserve",authMiddleware(true), handleAddBookToReservations); //authMiddleware
+userRoutes.put('/user/:userId',authMiddleware(true), handleUpdateUser); //authMiddleware
 
 // EXPORT ROUTES
 export default userRoutes;

@@ -11,7 +11,8 @@ type UserType = {
     password: string;
     state: boolean;
     role: string;
-    bookings: Types.ObjectId[];};
+    bookings: Types.ObjectId[];
+};
 
 // DECLARE MONGOOSE SCHEMA
 const UserSchema = new Schema<UserType>({

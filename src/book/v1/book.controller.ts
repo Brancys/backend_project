@@ -2,7 +2,7 @@ import createBookAction from "./create.book.action";
 import bookActions from "./read.book.action";
 import { BookType } from "./book.model";
 import { CreateBookType } from "./book.types";
-import softDeleteBookAction from "./delete.book.action";
+import {softDeleteBookAction, updateBookAction} from "./delete.book.action";
 
 export interface BookFilters {
   name?: string | { $regex: RegExp };
@@ -54,5 +54,19 @@ async function softDeleteBook(BookId: string) {
   }
 }
 
+async function updateBookController(bookId: string, updateData: Partial<{ title: string; author: string; releaseDate: string; price: string; description: string }>) {
+  if (!updateData.title && !updateData.author && !updateData.releaseDate && !updateData.price && !updateData.description) {
+      throw new Error("No valid fields to update");
+  }
+
+  const updatedBook = await updateBookAction(bookId, updateData);
+
+  if (!updatedBook) {
+      throw new Error("Book not found");
+  }
+
+  return updatedBook;
+}
+
 // EXPORT CONTROLLER FUNCTIONS
-export { readBooks, readBookbyID, createBook, readBooksbyFilters, softDeleteBook };
+export { readBooks, readBookbyID, createBook, readBooksbyFilters, softDeleteBook, updateBookController };

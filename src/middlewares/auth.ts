@@ -1,7 +1,17 @@
-import jwt from "jsonwebtoken";
+import jwt    from "jsonwebtoken";
+import { JwtPayload } from 'jsonwebtoken';
 import  isAdmin  from "../user/v1/user.routes";
+import { Request, Response, NextFunction } from "express";
+
+// Extending the Request interface to include the user property
 
 const SECRET_KEY = process.env.JWT_SECRET; // Reemplaza 'your_secret_key' por tu clave secreta
+
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: JwtPayload | string; // Agrega la propiedad `user` al tipo `Request`
+  }
+}
 
 // Función para generar un token JWT
 export function generateToken(
@@ -14,35 +24,36 @@ export function generateToken(
   return jwt.sign(payload, SECRET_KEY, { expiresIn });
 }
 
-// Función para verificar un token JWT
-export function verifyToken(token: string) {
-  if (!SECRET_KEY) {
-    throw new Error("JWT_SECRET is not defined in the environment variables");
-  }
-  try {
-    return jwt.verify(token, SECRET_KEY);
-  } catch (error) {
-    return null; // Retorna null si el token no es válido
-  }
-}
-
 // Middleware para proteger rutas con autenticación
-export function authMiddleware(request: any, response: any, next: any) {
-  // if (isAdmin) {
-  //   next();
-  // }
-  const token = request.headers["authorization"]; // Obtener el token del header
-  if (!token) {
-    return response
-      .status(401)
-      .json({ message: "Access denied. No token provided." });
-  }
+export function authMiddleware(requireSelfOrAdmin: boolean = false) {
+  return (request: Request, response: Response, next: NextFunction) => {
+      const authHeader = request.headers['authorization'];
+      const token = authHeader && authHeader.split(' ')[1];
 
-  const decoded = verifyToken(token);
-  if (!decoded) {
-    return response.status(401).json({ message: "Invalid token." });
-  }
+      if (!token) {
+          return response.status(401).json({ message: 'Access denied. No token provided.' });
+      }
 
-  request.user = decoded; // Agrega el payload decodificado a la solicitud
-  next();
+      try {
+          const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as any;
+
+          // Agregar el usuario decodificado a la solicitud
+          request.user = decoded;
+
+          // Si `requireSelfOrAdmin` es verdadero, verifica si es el mismo usuario o si es admin
+          if (requireSelfOrAdmin) {
+              const { userId } = request.params;
+              const isAdmin = decoded.role === 'admin';
+              const isSelf = decoded.userId === userId;
+
+              if (!isAdmin && !isSelf) {
+                  return response.status(403).json({ message: 'Access denied. Only the user or an admin can perform this action.' });
+              }
+          }
+
+          next();
+      } catch (error) {
+          return response.status(401).json({ message: 'Invalid token.' });
+      }
+  };
 }

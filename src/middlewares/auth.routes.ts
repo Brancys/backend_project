@@ -1,7 +1,11 @@
 import { Router, Request, Response } from 'express';
 import { generateToken } from './auth'; // Importa la función para generar el token
+import { loginController } from '../user/v1/user.controller';
 
 const authRoutes = Router();
+
+authRoutes.post('/login', loginController);
+
 
 authRoutes.post('/generate-token', (request: Request, response: Response) => {
     const { userId, email, role } = request.body;
