@@ -9,7 +9,7 @@ import {
   updateBookController,
 } from "./book.controller";
 import { CreateBookType } from "./book.types";
-import { authMiddleware } from "../../middlewares/auth";
+import { authMiddleware, onlyAdminMiddleware } from "../../middlewares/auth";
 
 // INIT ROUTES
 const BookRoutes = Router();
@@ -149,7 +149,7 @@ async function handleReadBooks(request: Request, response: Response) {
   }
 }
 
-async function handleUpdateUser(request: Request, response: Response) {
+async function handleUpdateBook(request: Request, response: Response) {
   const { bookId } = request.params;
   const { title, author, releaseDate, price, description } = request.body;
 
@@ -175,10 +175,10 @@ async function handleUpdateUser(request: Request, response: Response) {
 // DECLARE ENDPOINTS
 BookRoutes.get("/", GetBooks);
 BookRoutes.get("/one/:bookId", GetOneBook); //AuthMiddleware
-BookRoutes.post("/",authMiddleware(true), CreateBooks);
+BookRoutes.post("/",onlyAdminMiddleware(true), CreateBooks);
 BookRoutes.get("/filter", handleReadBooks);
-BookRoutes.delete("/delete/:bookId", authMiddleware(true), handleSoftDeleteBook);
-BookRoutes.put('/book/:bookId', authMiddleware(true), handleUpdateUser);
+BookRoutes.delete("/delete/:bookId", onlyAdminMiddleware(true), handleSoftDeleteBook);
+BookRoutes.put('/book/:bookId', onlyAdminMiddleware(true), handleUpdateBook);
 
 // EXPORT ROUTES
 export default BookRoutes;

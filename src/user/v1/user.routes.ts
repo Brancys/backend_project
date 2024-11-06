@@ -9,7 +9,7 @@ import {
   updateUserController,
 } from "./user.controller";
 import { CreateUserType } from "./user.types";
-import { authMiddleware } from "../../middlewares/auth";
+import { authMiddleware, onlyAdminMiddleware } from "../../middlewares/auth";
 
 // INIT ROUTES
 const userRoutes = Router();
@@ -163,14 +163,14 @@ async function handleUpdateUser(request: Request, response: Response) {
 }
 
 
-// DECLARE ENDPOINTS
-userRoutes.get("/", GetUsers);
-userRoutes.get("/one/:userId", GetOneUser); 
-userRoutes.post("/", CreateUser); 
-userRoutes.get("/verify-password/", VerifyUserPassword); //authMiddleware
-userRoutes.delete("/user/:userId", authMiddleware(true), handleSoftDeleteUser); //authMiddleware
-userRoutes.post("/booking/:userId/reserve",authMiddleware(true), handleAddBookToReservations); //authMiddleware
-userRoutes.put('/user/:userId',authMiddleware(true), handleUpdateUser); //authMiddleware
+  // DECLARE ENDPOINTS
+  userRoutes.get("/", onlyAdminMiddleware(true),GetUsers);
+  userRoutes.get("/one/:userId",authMiddleware(true), GetOneUser); 
+  userRoutes.post("/", CreateUser); 
+  userRoutes.get("/verify-password/", VerifyUserPassword); //authMiddleware
+  userRoutes.delete("/user/:userId", authMiddleware(true), handleSoftDeleteUser); //authMiddleware
+  userRoutes.post("/booking/:userId/reserve",authMiddleware(true), handleAddBookToReservations); //authMiddleware
+  userRoutes.put('/user/:userId',authMiddleware(true), handleUpdateUser); //authMiddleware
 
 // EXPORT ROUTES
 export default userRoutes;
