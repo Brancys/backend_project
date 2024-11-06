@@ -97,3 +97,7 @@ backend_project/
 │           ├── user.model.ts
 │           ├── user.routes.ts
 │           └── user.types.ts
+```
+
+## Contribuciones
+Para contribuir a este proyecto, crea un fork del repositorio y abre un Pull Request con tus cambios.
