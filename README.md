@@ -2,8 +2,6 @@
 
 Este proyecto es el backend para una plataforma de biblioteca digital que permite a los usuarios registrarse, iniciar sesión y reservar libros. Los administradores tienen permisos adicionales para agregar, actualizar y eliminar libros de la base de datos. Está construido en TypeScript y utiliza autenticación basada en tokens JWT para asegurar las operaciones restringidas.
 
-Repositorio de GitHub: [backend_project](https://github.com/Brancys/backend_project)
-
 ## Tabla de Contenidos
 - [Descripción del Proyecto](#descripción-del-proyecto)
 - [Estructura del Proyecto](#estructura-del-proyecto)
