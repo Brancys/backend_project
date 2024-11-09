@@ -45,7 +45,7 @@ Este proyecto es el backend de una plataforma de biblioteca que permite a los us
 
 1. Clona el repositorio:
    ```bash
-   git clone https://github.com/AntonyJDC/proyectobackend.git
+   git clone https://github.com/Brancys/backend_project.git
    ```
 2. Instala las dependencias:
    ```bash
@@ -57,11 +57,11 @@ Este proyecto es el backend de una plataforma de biblioteca que permite a los us
    npm run dev
    ```
    
-## Middleware de Permisos
+## Middleware
 
 El proyecto incluye un middleware de permisos que verifica si un usuario tiene autorización para realizar modificaciones en otros usuarios. Si el `userId` en la URL coincide con el del token del usuario autenticado o si el usuario tiene permisos, se le permite realizar la acción solicitada.
 
-## Requisitos Técnicos
+## Requisitos
 
 - **Node.js**: Versión 14 o superior.
 - **Express**: Para la configuración de rutas y middleware.
