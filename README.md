@@ -1,8 +1,8 @@
-# Proyecto de Backend - Sistema de Biblioteca
+# Biblioteca - Backend
 
 Este proyecto es el backend de una plataforma de biblioteca que permite a los usuarios registrarse, reservar libros y gestionar su perfil. El sistema incluye autenticación, CRUD para usuarios y libros, soft deletes, historial de reservas y filtros de búsqueda.
 
-## Características
+## Funcionalidades
 
 - **Registro y Autenticación**: Permite que los usuarios se registren e inicien sesión. Algunos endpoints están protegidos mediante autenticación.
 - **Gestión de Usuarios**: CRUD completo para los usuarios registrados en la biblioteca.
@@ -14,7 +14,7 @@ Este proyecto es el backend de una plataforma de biblioteca que permite a los us
 - **Filtros de Búsqueda**: Permite realizar búsquedas avanzadas de libros según diferentes criterios.
 - **Control de Permisos**: Los usuarios con permisos específicos pueden realizar acciones avanzadas, como modificar o eliminar otros usuarios.
 
-## Estructura del Proyecto
+## Estructura
 
 - `controllers/`: Contiene los controladores de usuarios y libros, donde se definen las acciones CRUD y lógica.
 - `models/`: Define los modelos de la base de datos, como `User` y `Book`.
@@ -24,7 +24,7 @@ Este proyecto es el backend de una plataforma de biblioteca que permite a los us
 - `services/`: Define las acciones de negocio que interactúan con la base de datos, como `getUserById`, `updateUserById` y `deactivateUserById`.
 - `routes/`: Define las rutas principales del sistema, con protección para las operaciones CRUD y permisos para las acciones avanzadas.
 
-## Rutas Principales
+## Endpoints
 
 ### Autenticación
 - `POST /auth/register`: Permite registrar a un nuevo usuario en la plataforma.
@@ -57,13 +57,11 @@ Este proyecto es el backend de una plataforma de biblioteca que permite a los us
    npm run dev
    ```
    
-## Middleware
-
-El proyecto incluye un middleware de permisos que verifica si un usuario tiene autorización para realizar modificaciones en otros usuarios. Si el `userId` en la URL coincide con el del token del usuario autenticado o si el usuario tiene permisos, se le permite realizar la acción solicitada.
-
 ## Requisitos
 
 - **Node.js**: Versión 14 o superior.
 - **Express**: Para la configuración de rutas y middleware.
 - **MongoDB**: Base de datos para el almacenamiento de usuarios, libros y reservas.
 - **JWT**: Autenticación mediante JSON Web Tokens.
+
+**NOTA: ** El proyecto verifica si un usuario tiene autorización para realizar modificaciones en otros usuarios. Si el `userId` en la URL coincide con el del token del usuario autenticado o si el usuario tiene permisos, se le permite realizar la acción solicitada.
